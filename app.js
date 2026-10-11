@@ -1197,7 +1197,7 @@
   }
   $('[data-act-theme]').addEventListener('click', function () { S.settings.theme = S.settings.theme === 'light' ? 'dark' : 'light'; applyTheme(); save(); if (location.hash.indexOf('profil') > -1) render(); });
   window.addEventListener('hashchange', function () { if (!/trening|pr/.test(location.hash)) stopRest(); clearInterval(setTimer); render(); });
-  setInterval(function () { var p = $('[data-persist]'); if (p && navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(function (x) { p.textContent = x ? 'włączona' : 'nie przyznana (rób kopię)'; }); }, 1500);
+  setInterval(function () { var p = $('[data-persist]'); if (p && navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(function (x) { p.textContent = x ? 'włączona' : 'wyłączona'; }); }, 1500);
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && S) save(true); if (document.visibilityState === 'visible' && document.body.classList.contains('is-run')) { wake = null; wakeOn(); } });
 
   load().then(function (st) { S = st; applyTheme(); render(); if (S.onboarded) askPersist(); });
