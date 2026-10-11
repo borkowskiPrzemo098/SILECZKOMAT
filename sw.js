@@ -1,6 +1,6 @@
 /* SIŁECZKOMAT — tryb offline. Aplikacja z pamięci podręcznej, czcionki zapisywane przy pierwszym wczytaniu. */
-const CACHE = 'silczkomat-v3';
-const SHELL = ['./', 'index.html', 'style.css?v=2', 'data.js?v=2', 'figures.js?v=2', 'app.js?v=2', 'manifest.webmanifest', 'favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'fonts/fonts.css', 'fonts/unbounded-latin.woff2', 'fonts/unbounded-latin-ext.woff2', 'fonts/onest-latin.woff2', 'fonts/onest-latin-ext.woff2'];
+const CACHE = 'silczkomat-v5';
+const SHELL = ['./', 'index.html', 'style.css?v=4', 'data.js?v=4', 'figures.js?v=4', 'app.js?v=4', 'manifest.webmanifest', 'favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'fonts/fonts.css', 'fonts/unbounded-latin.woff2', 'fonts/unbounded-latin-ext.woff2', 'fonts/onest-latin.woff2', 'fonts/onest-latin-ext.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(n => n !== CACHE).map(n => caches.delete(n)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
