@@ -228,61 +228,6 @@ window.SZ = (function () {
     E('jumpingjack', 'Pajacyki', 'jack', {}, [], ['serce'], ['lydki'], ['kostka'], 1, { k: 'i', t: 45, front: 'jack' })
   ];
 
-  /* ---------- ROZCIĄGANIE I MOBILIZACJA (≈40) ---------- */
-  function T(id, name, mv, p, regions, hold, cues) { return { id: id, name: name, mv: mv, p: p || {}, regions: regions, hold: hold, dur: /powt|zmian/.test(hold) ? 40 : (parseInt(hold, 10) || 30) * (/na stronę/.test(hold) ? 2 : 1), prim: [], sec: [], cues: cues }; }
-  var STRETCH = [
-    T('s-neck-side', 'Skłon głowy w bok', 's-neck', {}, ['szyja'], '30 s na stronę', ['Opuść bark po przeciwnej stronie.', 'Ucho w stronę barku, bez skrętu głowy.']),
-    T('s-neck-chin', 'Cofanie brody', 's-chin', {}, ['szyja', 'piersiowy'], '30 s', ['Wsuń brodę w tył jak „podwójny podbródek”.', 'Głowa wysoko, wzrok przed siebie.']),
-    T('s-cross', 'Bark przez klatkę', 's-cross', {}, ['bark'], '30 s na stronę', ['Przyciągnij ramię do klatki drugą ręką.', 'Bark nisko, nie unoś go do ucha.']),
-    T('s-sleeper', 'Rotacja wewnętrzna barku leżąc', 's-sleeper', {}, ['bark'], '30 s na stronę', ['Leż na boku, ramię przed sobą.', 'Delikatnie dociskaj przedramię w dół.']),
-    T('s-wall-pec', 'Klatka przy ścianie', 's-wall', {}, ['bark', 'piersiowy'], '30 s na stronę', ['Przedramię na ścianie na wysokości barku.', 'Delikatnie obróć tułów od ściany.']),
-    T('s-doorway', 'Klatka w futrynie', 's-door', {}, ['bark', 'piersiowy'], '30 s', ['Oba przedramiona na futrynie.', 'Krok w przód, klatka do przodu.']),
-    T('s-lat', 'Najszerszy grzbietu przy ławce', 's-lat', {}, ['bark', 'piersiowy'], '30 s', ['Łokcie na ławce, siad na piętach.', 'Opuszczaj klatkę w dół.']),
-    T('s-tri', 'Triceps za głową', 's-tri', {}, ['bark', 'lokiec'], '30 s na stronę', ['Łokieć w górę, dłoń za łopatką.', 'Drugą ręką dociśnij łokieć.']),
-    T('s-wrist-ext', 'Prostowniki przedramienia', 's-wrist', { flex: 1 }, ['lokiec', 'nadgarstek'], '20 s na stronę', ['Ręka prosta przed sobą, dłoń w dół.', 'Drugą ręką przyciągnij dłoń do siebie.']),
-    T('s-wrist-flex', 'Zginacze przedramienia', 's-wrist', {}, ['lokiec', 'nadgarstek'], '20 s na stronę', ['Ręka prosta, dłoń do góry.', 'Odciągnij palce w dół i do siebie.']),
-    T('s-thread', 'Nawlekanie igły', 's-thread', {}, ['piersiowy', 'bark'], '8 na stronę', ['Klęk podparty.', 'Przełóż rękę pod tułowiem, obróć klatkę.']),
-    T('s-open-book', 'Otwarta książka', 's-book', {}, ['piersiowy'], '8 na stronę', ['Leż na boku, kolana zgięte.', 'Otwieraj górną rękę na drugą stronę.']),
-    T('s-catcow', 'Koci grzbiet', 's-catcow', {}, ['piersiowy', 'ledzwie'], '10 powtórzeń', ['Na wydechu zaokrąglij plecy.', 'Na wdechu delikatnie je wygnij.']),
-    T('s-child', 'Pozycja dziecka', 's-child', {}, ['ledzwie', 'piersiowy', 'biodro'], '40 s', ['Pośladki na piętach.', 'Ręce daleko przed sobą.']),
-    T('s-hug', 'Kolana do klatki leżąc', 's-hug', {}, ['ledzwie', 'biodro'], '30 s', ['Przyciągnij oba kolana.', 'Delikatnie kołysz się na boki.']),
-    T('s-twist', 'Skręt leżąc', 's-twist', {}, ['ledzwie', 'piersiowy'], '30 s na stronę', ['Kolano na drugą stronę.', 'Łopatki zostają na podłodze.']),
-    T('s-cobra', 'Kobra', 's-cobra', {}, ['ledzwie'], '10 powtórzeń', ['Biodra na podłodze.', 'Unoś klatkę na rękach bez bólu.']),
-    T('s-pelvic', 'Wahania miednicy leżąc', 's-pelvic', {}, ['ledzwie'], '12 powtórzeń', ['Kolana zgięte, stopy na podłodze.', 'Na zmianę dociskaj i odrywaj lędźwie.']),
-    T('s-hipflex', 'Zginacze biodra w wykroku', 's-hipflex', {}, ['biodro', 'ledzwie'], '30 s na stronę', ['Tylne kolano na macie.', 'Ściśnij pośladek, biodra lekko w przód.']),
-    T('s-pigeon', 'Gołąb', 's-pigeon', {}, ['biodro', 'ledzwie'], '40 s na stronę', ['Przednia goleń w poprzek maty.', 'Pochyl się nad przednią nogą.']),
-    T('s-figure4', 'Czwórka leżąc', 's-fig4', {}, ['biodro', 'ledzwie'], '30 s na stronę', ['Kostka na przeciwległym kolanie.', 'Przyciągnij dolną nogę do klatki.']),
-    T('s-butterfly', 'Motyl', 's-butter', {}, ['biodro'], '40 s', ['Stopy razem, kolana na boki.', 'Plecy proste, pochyl się lekko.']),
-    T('s-frog', 'Żaba', 's-frog', {}, ['biodro'], '40 s', ['Kolana szeroko w klęku.', 'Biodra powoli w tył.']),
-    T('s-9090', 'Pozycja 90/90', 's-9090', {}, ['biodro'], '8 zmian strony', ['Obie nogi zgięte pod kątem 90°.', 'Przenoś kolana na drugą stronę.']),
-    T('s-quad', 'Czworogłowy stojąc', 's-quad', {}, ['kolano', 'biodro'], '30 s na stronę', ['Pięta do pośladka, kolana obok siebie.', 'Biodro lekko w przód.']),
-    T('s-quad-lie', 'Czworogłowy leżąc na boku', 's-quadlie', {}, ['kolano', 'biodro'], '30 s na stronę', ['Leż na boku.', 'Przyciągnij piętę do pośladka.']),
-    T('s-ham-seat', 'Tył ud w siadzie', 's-ham', {}, ['kolano', 'ledzwie'], '30 s', ['Nogi proste, palce do góry.', 'Pochylaj się z bioder.']),
-    T('s-ham-band', 'Tył uda leżąc z gumą', 's-hamband', {}, ['kolano', 'ledzwie', 'biodro'], '30 s na stronę', ['Guma na stopie, noga prosta w górę.', 'Druga noga płasko na podłodze.']),
-    T('s-ham-stand', 'Tył uda stojąc na podwyższeniu', 's-hamstand', {}, ['kolano'], '30 s na stronę', ['Pięta na stopniu, noga prosta.', 'Pochylaj się z prostymi plecami.']),
-    T('s-adductor', 'Przywodziciele w rozkroku', 's-adduct', {}, ['biodro', 'kolano'], '30 s na stronę', ['Szeroki rozkrok.', 'Przenieś ciężar na jedną nogę, druga prosta.']),
-    T('s-itb', 'Pasmo biodrowo-piszczelowe', 's-itb', {}, ['kolano', 'biodro'], '30 s na stronę', ['Skrzyżuj nogi stojąc.', 'Przechyl się w bok.']),
-    T('s-calf-wall', 'Łydka przy ścianie', 's-calf', {}, ['kostka', 'kolano'], '30 s na stronę', ['Tylna noga prosta, pięta na podłodze.', 'Przenieś ciężar w stronę ściany.']),
-    T('s-soleus', 'Łydka z ugiętym kolanem', 's-calf', { bent: 1 }, ['kostka'], '30 s na stronę', ['Jak przy ścianie, ale tylne kolano ugięte.', 'Rozciąga głębszy mięsień łydki.']),
-    T('s-ankle', 'Mobilizacja kostki kolanem do ściany', 's-ankle', {}, ['kostka', 'kolano'], '10 na stronę', ['Stopa ok. 10 cm od ściany.', 'Pchaj kolano do ściany, pięta na ziemi.']),
-    T('s-squat-hold', 'Głęboki przysiad z podparciem', 's-deepsq', {}, ['biodro', 'kostka', 'ledzwie'], '45 s', ['Trzymaj się framugi.', 'Łokcie rozpychają kolana.']),
-    T('s-wgs', 'Najlepsze rozciąganie świata', 's-wgs', {}, ['biodro', 'piersiowy', 'kolano'], '5 na stronę', ['Wykrok, łokieć do stopy.', 'Otwórz rękę do sufitu.']),
-    T('s-arm-circles', 'Krążenia ramion', 's-circles', {}, ['bark'], '20 powtórzeń', ['Duże, wolne koła.', 'W przód i w tył.']),
-    T('s-band-pa', 'Rozciąganie gumy przed sobą', 's-pullapart', {}, ['bark', 'piersiowy'], '15 powtórzeń', ['Guma na wysokości barków.', 'Rozciągaj, ściągając łopatki.']),
-    T('s-glute-bridge', 'Mostek aktywacyjny', 's-bridge', {}, ['biodro', 'ledzwie'], '12 powtórzeń', ['Unieś biodra i przytrzymaj 2 s.', 'Ściśnij pośladki.']),
-    T('s-neck-rot', 'Rotacje głowy', 's-neckrot', {}, ['szyja'], '8 na stronę', ['Powoli patrz przez ramię.', 'Bez bólu, mały zakres na start.'])
-  ];
-
-  var SESSIONS = [
-    { id: 'biurko', name: 'Po dniu przy biurku', min: 8, items: ['s-neck-chin', 's-doorway', 's-thread', 's-hipflex', 's-catcow', 's-ham-band'] },
-    { id: 'nogi', name: 'Przed treningiem nóg', min: 6, items: ['s-ankle', 's-wgs', 's-squat-hold', 's-glute-bridge', 's-9090'] },
-    { id: 'gora', name: 'Przed treningiem góry', min: 5, items: ['s-arm-circles', 's-band-pa', 's-thread', 's-open-book'] },
-    { id: 'plecy', name: 'Na lędźwie', min: 7, items: ['s-pelvic', 's-catcow', 's-child', 's-hug', 's-twist', 's-figure4'] },
-    { id: 'biodra', name: 'Otwarcie bioder', min: 8, items: ['s-9090', 's-pigeon', 's-butterfly', 's-frog', 's-adductor'] },
-    { id: 'wieczor', name: 'Wieczorne wyciszenie', min: 10, items: ['s-child', 's-twist', 's-figure4', 's-ham-band', 's-hug', 's-neck-side'] },
-    { id: 'barki', name: 'Barki i szyja', min: 6, items: ['s-neck-side', 's-neck-rot', 's-cross', 's-wall-pec', 's-sleeper', 's-tri'] }
-  ];
-
   var BADGES = [
     { id: 'first', name: 'Pierwszy trening', d: 'Zapisz pierwszy trening.' },
     { id: 'w10', name: '10 treningów', d: 'Zapisz 10 treningów.' },
@@ -294,8 +239,7 @@ window.SZ = (function () {
     { id: 'pr10', name: '10 rekordów', d: 'Pobij 10 rekordów.' },
     { id: 'ton', name: 'Tona w jeden dzień', d: 'Zrób 10 000 kg objętości w jednym treningu.' },
     { id: 'streak4', name: 'Miesiąc bez przerwy', d: 'Trenuj 4 tygodnie z rzędu.' },
-    { id: 'streak12', name: 'Kwartał bez przerwy', d: 'Trenuj 12 tygodni z rzędu.' },
-    { id: 'mobility', name: 'Ruchomy', d: 'Ukończ 5 sesji rozciągania.' }
+    { id: 'streak12', name: 'Kwartał bez przerwy', d: 'Trenuj 12 tygodni z rzędu.' }
   ];
 
   var LEGS = ['czworoglowe', 'dwuglowe', 'posladki', 'lydki', 'przywodziciele'];
@@ -303,5 +247,5 @@ window.SZ = (function () {
   function segOf(m) { return LEGS.indexOf(m) > -1 ? 'leg' : ARMS.indexOf(m) > -1 ? 'arm' : 'torso'; }
   function groupOf(m) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].m.indexOf(m) > -1) return GROUPS[i].id; return 'brzuch'; }
 
-  return { EQUIPMENT: EQUIPMENT, MUSCLES: MUSCLES, GROUPS: GROUPS, JOINTS: JOINTS, SIDED: SIDED, MV: MV, EX: EX, STRETCH: STRETCH, SESSIONS: SESSIONS, BADGES: BADGES, segOf: segOf, groupOf: groupOf };
+  return { EQUIPMENT: EQUIPMENT, MUSCLES: MUSCLES, GROUPS: GROUPS, JOINTS: JOINTS, SIDED: SIDED, MV: MV, EX: EX, STRETCH: [], BADGES: BADGES, segOf: segOf, groupOf: groupOf };
 })();

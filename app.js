@@ -6,7 +6,6 @@
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var view = $('#view');
   var EXI = {}; SZ.EX.forEach(function (e) { EXI[e.id] = e; });
-  var STI = {}; SZ.STRETCH.forEach(function (e) { STI[e.id] = e; });
   var DAY = 864e5;
   var nf = function (n, d) { return Number(n).toFixed(d || 0).replace('.', ','); };
   var kg = function (n) { return (Math.round(n * 10) / 10).toString().replace('.', ',') + ' kg'; };
@@ -315,13 +314,13 @@
     view.innerHTML = fn(parts[1], parts[2]);
     setNav(parts[0]);
     after();
-    var run = parts[0] === 'trening' || parts[0] === 'pr' || parts[0] === 'sesja';
+    var run = parts[0] === 'trening' || parts[0] === 'pr';
     document.body.classList.toggle('is-run', run);
     if (run) wakeOn(); else wakeOff();
   }
   function after() { FIG.watch(view); window.scrollTo(0, 0); }
   function setNav(r) {
-    var map = { cw: 'cwiczenia', plan: 'dzis', rozciaganie: 'cialo', sesja: 'cialo', pomiary: 'postepy', zdjecia: 'postepy', odznaki: 'postepy', podsumowanie: 'postepy' };
+    var map = { cw: 'cwiczenia', plan: 'dzis', pomiary: 'postepy', zdjecia: 'postepy', odznaki: 'postepy', podsumowanie: 'postepy' };
     var cur = map[r] || r;
     $$('.tabs a').forEach(function (a) { var on = a.getAttribute('data-r') === cur; a.classList.toggle('is-on', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   }
@@ -402,8 +401,6 @@
   }
 
   /* ---------- DZIŚ ---------- */
-  function stretchFor(regions) { return SZ.STRETCH.filter(function (s) { return s.regions.some(function (r) { return regions.indexOf(r) > -1; }); }); }
-  function stretchRow(s) { return '<li><a class="strow" href="#/cw/' + s.id + '">' + thumb(s, 'fig--sm fig--stretch') + '<span><b>' + s.name + '</b><small>' + s.hold + '</small><span class="strow__cue">' + s.cues.join(' ') + '</span></span></a></li>'; }
   routes.dzis = function () {
     var t = todayPlan(), d = new Date(), name = S.profile.name, cw = cycleWeek(), rd = readinessToday(), heat = fatigue();
     var tired = Object.keys(heat).filter(function (m) { return heat[m] > .65; });
@@ -419,8 +416,7 @@
     if (!t) {
       var nt = nextTemplate();
       html += '<section class="today today--rest"><div class="today__head"><h2>Dzień odpoczynku</h2><p>Regeneracja to też trening. Następny: ' + esc(nt) + '.</p></div>' +
-        '<a class="pickrow" href="#/sesja/biurko">' + thumb(STI['s-catcow'], 'fig--sm fig--stretch') + '<span><b>Sesja mobilności · 8 min</b><small>Po dniu przy biurku</small></span></a>' +
-        '<div class="stack"><button class="btn btn--ghost btn--wide" data-act="extra-day">Trenuj mimo to: ' + esc(nt) + '</button><a class="btn btn--ghost btn--wide" href="#/plan">Zmień kalendarz</a></div></section>';
+                '<div class="stack"><button class="btn btn--ghost btn--wide" data-act="extra-day">Trenuj mimo to: ' + esc(nt) + '</button><a class="btn btn--ghost btn--wide" href="#/plan">Zmień kalendarz</a></div></section>';
     } else {
       if (!rd && !S.active) html += '<section class="card ready"><h2>Jak się dziś czujesz?</h2>' +
         '<div class="ready__row"><span>Sen</span>' + seg('r-s', [[1, 'Słabo'], [2, 'OK'], [3, 'Dobrze']], 2) + '</div>' +
@@ -440,8 +436,6 @@
     }
     html += '<div class="duo"><a class="tile" href="#/plan"><b>Plan tygodnia</b><small>Kalendarz, edycja, bilans partii</small></a><a class="tile tile--pr" href="#/pr"><b>Dzień rekordu</b><small>Rozgrzewka i podejścia</small></a></div>';
     if (tired.length) html += '<section class="card"><div class="card__head"><h2>Zmęczenie mięśni</h2><span class="muted">ostatnie 4 dni</span></div>' + FIG.atlas({ heat: heat, small: 1 }) + '<p class="muted">Najbardziej zmęczone: ' + tired.map(function (m) { return SZ.MUSCLES[m]; }).join(', ') + '. Jeśli wybierasz partię sam, daj im dzień przerwy.</p></section>';
-    var pj = Object.keys(S.pain);
-    if (pj.length) html += '<section class="card care"><h2>Rozciąganie na dziś</h2><ul class="stlist">' + stretchFor(pj.map(function (k) { return k.split('-')[0]; })).slice(0, 3).map(stretchRow).join('') + '</ul><a class="link" href="#/rozciaganie">Wszystkie sesje rozciągania</a></section>';
     return html;
   };
 
@@ -620,7 +614,7 @@
     var ex = EXI[D.ex], hit = painHit(ex);
     if (D.step === 1) {
       var b = best(ex.id);
-      if (hit.length) return '<header class="page"><button class="back" data-act="pr-back">Wybór</button><h1>' + ex.name + '</h1></header><section class="card stop"><h2>Odradzamy dziś próbę rekordu</h2><p>Zaznaczyłeś ból: ' + hit.map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '. To ćwiczenie mocno obciąża to miejsce, a maksymalny ciężar zwiększa ryzyko kontuzji.</p><ul class="stlist">' + stretchFor(hit).slice(0, 2).map(stretchRow).join('') + '</ul><button class="btn btn--ghost" data-act="pr-back">Wybierz inne ćwiczenie</button></section>';
+      if (hit.length) return '<header class="page"><button class="back" data-act="pr-back">Wybór</button><h1>' + ex.name + '</h1></header><section class="card stop"><h2>Odradzamy dziś próbę rekordu</h2><p>Zaznaczyłeś ból: ' + hit.map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '. To ćwiczenie mocno obciąża to miejsce, a maksymalny ciężar zwiększa ryzyko kontuzji.</p><button class="btn btn--ghost" data-act="pr-back">Wybierz inne ćwiczenie</button></section>';
       return '<header class="page"><button class="back" data-act="pr-back">Wybór</button><h1>' + ex.name + '</h1><p class="lead">' + PRT[D.type].name + '</p></header>' +
         '<form class="card" data-prform onsubmit="return false">' + (b ? '<p class="big"><b>' + kg(b.e) + '</b></p><p class="muted">Twój szacowany maks na 1 powtórzenie, wyliczony z ' + kg(b.w) + ' × ' + b.r + ' (' + dshort(b.date) + '). Popraw, jeśli wiesz lepiej.</p>' : '<p>Nie masz jeszcze zapisanej serii w tym ćwiczeniu. Podaj najlepszą serię z ostatnich tygodni.</p>') +
         '<div class="grid2">' + num('pw', 'Ciężar', b ? b.w : round(guessStart(ex) * 1.3, ex.unit || 2.5), 'kg') + num('pr', 'Powtórzenia', b ? b.r : 5, '×') + '</div>' +
@@ -653,10 +647,9 @@
   function buildPr(ex, w, r, checks, type, rw) {
     var e = e1rm(w, r), u = ex.unit || 2.5;
     var neg = ['sen', 'jedz', 'woda', 'bol', 'ase'].filter(function (k) { return !checks[k]; }).length, pen = Math.min(neg * 2, 8), base = e * (1 - pen / 100);
-    var stretches = stretchFor(ex.stress).slice(0, 2).map(function (s) { return s.name.toLowerCase(); });
     var steps = [
       { kind: 'prep', label: 'rozgrzewka ogólna', what: '5–8 min roweru, skakanki lub szybkiego marszu', tip: 'Do lekkiego spocenia.' },
-      { kind: 'prep', label: 'mobilizacja', what: stretches.length ? 'Dynamicznie: ' + stretches.join(', ') : 'Krążenia stawów i 10 lekkich powtórzeń ruchu', tip: 'Ruch, nie długie trzymanie.' }
+      { kind: 'prep', label: 'mobilizacja', what: 'Krążenia stawów i 10 lekkich powtórzeń ruchu z samym gryfem', tip: 'Ruch, nie długie trzymanie.' }
     ];
     var reps = PRT[type].reps, target, goalTxt, atts;
     if (type === 'reps') {
@@ -706,10 +699,7 @@
       '<p class="muted" data-lib-n>' + list.length + ' ćwiczeń</p><ul class="lib" data-lib>' + libItems(list) + '</ul>';
   };
   routes.cw = function (id) {
-    var e = EXI[id] || STI[id]; if (!e) return routes.cwiczenia();
-    if (STI[id]) return '<header class="page"><a class="back" href="#/rozciaganie">Rozciąganie</a><h1>' + e.name + '</h1></header><div class="plate">' + FIG.figure(e, { cls: 'fig--xl fig--stretch' }) + '</div>' +
-      '<section class="card"><h2>Jak</h2><p class="big2">' + e.hold + '</p><ol class="cuelist">' + e.cues.map(function (c) { return '<li>' + c + '</li>'; }).join('') + '</ol></section>' +
-      '<dl class="ledger"><div><dt>Pomaga na</dt><dd>' + e.regions.map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '</dd></div></dl>' + medNote();
+    var e = EXI[id]; if (!e) return routes.cwiczenia();
     var b = best(id), h = history(id), ok = usable(e), vw = detailView[id] || (FIG.hasFront(e) && /raise|abduct|adduct|jack/.test(e.front) ? 'front' : 'side');
     var alts = alternatives(id).slice(0, 4), reg = e.reg && EXI[e.reg], prog = e.prog && EXI[e.prog], rp = repPRs(id);
     return '<header class="page"><a class="back" href="#/cwiczenia">Ćwiczenia</a><h1>' + e.name + '</h1></header>' +
@@ -747,7 +737,7 @@
     });
   }
   routes.cialo = function () {
-    var excl = SZ.EX.filter(function (e) { return painHit(e).length; }), keys = Object.keys(S.pain), regions = keys.map(function (k) { return k.split('-')[0]; });
+    var excl = SZ.EX.filter(function (e) { return painHit(e).length; }), keys = Object.keys(S.pain);
     return '<header class="page"><h1>Ciało</h1><p class="lead">Dotknij miejsca, które boli, i oceń ból od 1 do 10. Od 4/10 plan omija ćwiczenia, które je obciążają.</p></header>' +
       '<section class="card">' + FIG.atlas({ mode: 'pain', pain: S.pain }) + painChips() + '</section>' +
       (keys.length ? '<section class="card"><h2>Dziennik bólu</h2><ul class="painlog">' + keys.map(function (k) {
@@ -755,45 +745,12 @@
         var trend = log.length > 1 ? (last.lvl < first.lvl ? 'lepiej' : last.lvl > first.lvl ? 'gorzej' : 'bez zmian') : 'pierwszy wpis';
         return '<li><button class="painrow" data-act="pain-open" data-v="' + k + '"><b>' + FIG.jointLabel.apply(null, k.split('-')) + '</b><span class="spark" aria-hidden="true">' + log.map(function (x) { return '<i style="--v:' + (x.lvl / 10) + '"></i>'; }).join('') + '</span><span class="painrow__t is-' + (trend === 'lepiej' ? 'up' : trend === 'gorzej' ? 'down' : 'flat') + '">' + S.pain[k].lvl + '/10 · ' + trend + '</span><small>ocena ' + ago(S.pain[k].date) + '</small></button></li>';
       }).join('') + '</ul></section>' +
-        '<section class="card"><h2>Rozciąganie i mobilizacja</h2><ul class="stlist">' + stretchFor(regions).slice(0, 6).map(stretchRow).join('') + '</ul></section>' +
         '<section class="card"><details class="excl"><summary>Pominięte ćwiczenia (' + excl.length + ')</summary><ul class="rows">' + excl.map(function (e) { return '<li><a href="#/cw/' + e.id + '"><b>' + e.name + '</b><span>obciąża: ' + painHit(e).map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '</span></a></li>'; }).join('') + '</ul></details></section>' : '') +
       '<section class="card"><div class="card__head"><h2>Zmęczenie mięśni</h2><span class="muted">ostatnie 4 dni</span></div>' + FIG.atlas({ heat: fatigue() }) + '<p class="legend"><span class="lg lg--heat"></span>im mocniejszy kolor, tym więcej serii ostatnio</p></section>' +
-      '<a class="tile tile--wide" href="#/rozciaganie"><b>Sesje rozciągania</b><small>' + SZ.SESSIONS.length + ' gotowych sesji z minutnikiem, ' + SZ.STRETCH.length + ' ćwiczeń mobilności</small></a>' + medNote();
+      medNote();
   };
 
   /* ---------- ROZCIĄGANIE ---------- */
-  routes.rozciaganie = function () {
-    return '<header class="page"><a class="back" href="#/cialo">Ciało</a><h1>Rozciąganie</h1><p class="lead">Gotowe sesje z minutnikiem albo pojedyncze ćwiczenia.</p></header>' +
-      '<ul class="rows--pick">' + SZ.SESSIONS.map(function (s) { return '<li><a class="pick" href="#/sesja/' + s.id + '">' + thumb(STI[s.items[0]], 'fig--sm fig--stretch') + '<span><b>' + s.name + '</b><small>' + s.min + ' min · ' + s.items.length + ' ćwiczeń</small></span></a></li>'; }).join('') + '</ul>' +
-      '<h2 class="h2">Wszystkie ćwiczenia</h2><ul class="lib">' + SZ.STRETCH.map(function (s) { return '<li><a class="libcard" href="#/cw/' + s.id + '">' + thumb(s, 'fig--md fig--stretch') + '<b>' + s.name + '</b><small>' + s.hold + '</small></a></li>'; }).join('') + '</ul>';
-  };
-  var sesT = null, sesState = null;
-  routes.sesja = function (id) {
-    var ses = SZ.SESSIONS.filter(function (s) { return s.id === id; })[0]; if (!ses) return routes.rozciaganie();
-    if (!sesState || sesState.id !== id) sesState = { id: id, i: 0, run: false };
-    var st = STI[ses.items[sesState.i]], sec = st.dur || 30;
-    return '<div class="run"><header class="run__top"><a class="iconbtn" href="#/rozciaganie" aria-label="Zamknij sesję">' + ICON.x + '</a><div class="run__prog"><span>' + esc(ses.name) + ' · ' + (sesState.i + 1) + ' z ' + ses.items.length + '</span><div class="bar"><i style="--w:' + (sesState.i / ses.items.length) + '"></i></div></div></header>' +
-      '<div class="plate">' + FIG.figure(st, { cls: 'fig--xl fig--stretch' }) + '</div><h1 class="run__name">' + st.name + '</h1><p class="run__meta">' + st.hold + '</p><ol class="cuelist">' + st.cues.map(function (c) { return '<li>' + c + '</li>'; }).join('') + '</ol>' +
-      '<p class="sestime" data-ses-t aria-live="off">' + (sesState.left != null ? sesState.left : sec) + ' s</p>' +
-      '<div class="run__nav"><button class="btn btn--ghost" data-act="ses-skip">Pomiń</button><button class="btn btn--main" data-act="ses-go">' + (sesState.run ? 'Pauza' : 'Start') + '</button></div></div>';
-  };
-  function sesRun() {
-    var ses = SZ.SESSIONS.filter(function (s) { return s.id === sesState.id; })[0], st = STI[ses.items[sesState.i]], left = sesState.left == null ? (st.dur || 30) : sesState.left;
-    clearInterval(sesT); sesState.run = true; beep(880, .1);
-    var end = Date.now() + left * 1000;
-    sesT = setInterval(function () {
-      sesState.left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
-      var el = $('[data-ses-t]'); if (el) el.textContent = sesState.left + ' s';
-      if (sesState.left <= 0) { clearInterval(sesT); beep(990, .3); if (navigator.vibrate) navigator.vibrate(200); sesNext(true); }
-    }, 250);
-    var b = $('[data-act="ses-go"]'); if (b) b.textContent = 'Pauza';
-  }
-  function sesNext(auto) {
-    var ses = SZ.SESSIONS.filter(function (s) { return s.id === sesState.id; })[0];
-    sesState.i++; sesState.left = null; sesState.run = false;
-    if (sesState.i >= ses.items.length) { S.stretchLog.push({ id: ses.id, date: Date.now() }); save(); toast('Sesja ukończona. Dobra robota.'); sesState = null; go('#/cialo'); return; }
-    render(); if (auto) setTimeout(sesRun, 1500);
-  }
 
   /* ---------- POSTĘPY ---------- */
   var chartEx = null;
@@ -949,7 +906,7 @@
   function earnedBadges() {
     var n = S.sessions.length, prs = Object.keys(S.prs).length, maxW = 0, benchB = best('bench'), tonDay = 0;
     S.sessions.forEach(function (s) { var v = 0; s.items.forEach(function (it) { it.sets.forEach(function (x) { if (x.warm) return; maxW = Math.max(maxW, x.w || 0); v += (x.w || 0) * x.r; }); }); tonDay = Math.max(tonDay, v); });
-    var st = streakWeeks(), ok = { first: n >= 1, w10: n >= 10, w50: n >= 50, w100: n >= 100, kg100: maxW >= 100, bwbench: !!(benchB && benchB.w >= S.profile.weight), pr1: prs >= 1, pr10: prs >= 10, ton: tonDay >= 10000, streak4: st >= 4, streak12: st >= 12, mobility: S.stretchLog.length >= 5 };
+    var st = streakWeeks(), ok = { first: n >= 1, w10: n >= 10, w50: n >= 50, w100: n >= 100, kg100: maxW >= 100, bwbench: !!(benchB && benchB.w >= S.profile.weight), pr1: prs >= 1, pr10: prs >= 10, ton: tonDay >= 10000, streak4: st >= 4, streak12: st >= 12 };
     return SZ.BADGES.filter(function (b) { return ok[b.id]; });
   }
   routes.odznaki = function () {
@@ -1146,8 +1103,6 @@
       }
       case 'lib': libFilter = v; rerenderKeep(); break;
       case 'chart': chartEx = v; rerenderKeep(); break;
-      case 'ses-go': if (sesState.run) { clearInterval(sesT); sesState.run = false; b.textContent = 'Wznów'; } else sesRun(); break;
-      case 'ses-skip': clearInterval(sesT); sesNext(false); break;
       case 'meas-save': {
         var fm = $('[data-meas]'), rec = { date: Date.now() }, any = false;
         MEAS.forEach(function (m) { var val = parseFloat(String(fm.elements[m[0]].value).replace(',', '.')); if (val > 0) { rec[m[0]] = val; any = true; } });
@@ -1241,7 +1196,7 @@
     var m = $('meta[name="theme-color"]'); if (m) m.setAttribute('content', S.settings.theme === 'light' ? '#f3f0e8' : '#0e1215');
   }
   $('[data-act-theme]').addEventListener('click', function () { S.settings.theme = S.settings.theme === 'light' ? 'dark' : 'light'; applyTheme(); save(); if (location.hash.indexOf('profil') > -1) render(); });
-  window.addEventListener('hashchange', function () { if (!/trening|pr/.test(location.hash)) stopRest(); if (!/sesja/.test(location.hash)) { clearInterval(sesT); sesState = null; } clearInterval(setTimer); render(); });
+  window.addEventListener('hashchange', function () { if (!/trening|pr/.test(location.hash)) stopRest(); clearInterval(setTimer); render(); });
   setInterval(function () { var p = $('[data-persist]'); if (p && navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(function (x) { p.textContent = x ? 'włączona' : 'nie przyznana (rób kopię)'; }); }, 1500);
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && S) save(true); if (document.visibilityState === 'visible' && document.body.classList.contains('is-run')) { wake = null; wakeOn(); } });
 

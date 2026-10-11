@@ -45,6 +45,7 @@ window.SZFIG = (function () {
     var ft = P.ft == null ? 90 : P.ft, ft2 = P.ft2 == null ? ft : P.ft2;
     var pts = { head: head, sho: sho, el: el, hand: hand, el2: el2, hand2: hand2, hip: hip, kn: kn, ank: ank, toe: add(ank, v(ft, L.ft)), kn2: kn2, ank2: ank2, toe2: add(ank2, v(ft2, L.ft)) };
     if (P.dy || P.dx) for (var k in pts) pts[k] = add(pts[k], [P.dx || 0, P.dy || 0]);
+    for (var k2 in pts) if (pts[k2][1] > G) pts[k2] = [pts[k2][0], G];   // nic nie wchodzi pod podłogę
     return pts;
   }
   function mixPts(a, b, t) { var o = {}; for (var k in a) o[k] = mix(a[k], b[k], t); return o; }
@@ -96,9 +97,9 @@ window.SZFIG = (function () {
     },
     hinge: function (k, p) {
       if (p.roman) {
-        var Pr = { base: 'hip', at: [50, 58], th: 238, sh: 238, ft: 330, tr: lerp(58, 168, k) };
+        var Pr = { base: 'hip', at: [52, 50], th: 238, sh: 238, ft: 330, tr: lerp(58, 160, k) };
         Pr.ua = Pr.tr + 150; Pr.fa = Pr.tr + 30;
-        return { P: Pr, track: 'head', props: function () { return [['poly', [[42, 62], [56, 56], [58, 60], [46, 94], [42, 94]], 'f-box'], ['seg', [26, 80], [26, 94], 'f-bench']]; } };
+        return { P: Pr, track: 'head', props: function () { return [['poly', [[44, 54], [58, 48], [60, 52], [48, 94], [44, 94]], 'f-box'], ['seg', [28, 72], [28, 94], 'f-bench']]; } };
       }
       var kn = p.knee || .3, lean = p.lean || 1;
       var P = { base: 'stand', at: STAND, tr: 88 * k * lean, th: 180 - kn * 95 * k, sh: 180 + kn * 42 * k, ua: 180, fa: 180 };
@@ -122,7 +123,7 @@ window.SZFIG = (function () {
       }
       var P = { base: 'stand', at: [61, G], sh: 180 + 14 * k, th: 180 - 84 * k, tr: 3 * k, ua: 180, fa: 180 };
       if (p.rear) { P.th2 = lerp(198, 188, k); P.sh2 = lerp(292, 300, k); P.ft2 = P.sh2 + 70; }
-      else { P.th2 = lerp(206, 182, k); P.sh2 = lerp(206, 262, k); P.ft2 = lerp(120, 180, k); }
+      else { P.th2 = lerp(206, 182, k); P.sh2 = lerp(206, 262, k); P.ft2 = lerp(120, 245, k); }
       if (p.tool === 'bar') { P.ua = 205; P.fa = 330; }
       return { P: P, track: 'hip', props: function (q) {
         var o = p.tool === 'bar' ? [['plate', add(q.sho, v(260, 3))]] : toolAt(p.tool, q.hand, q.hand2);
@@ -134,7 +135,7 @@ window.SZFIG = (function () {
       var a = p.a || 0, seated = p.seated || a >= 80;
       var tr = seated ? 0 : 270 + a, up = tr + 90;
       var P = { base: 'hip', at: seated ? [44, 66] : [58, 66], tr: tr, hd: tr };
-      P.ua = up + (150 - (p.close ? 22 : 0)) * k; P.fa = up - 14 * k;
+      P.ua = up + (seated ? 150 : 104 - (p.close ? 12 : 0)) * k; P.fa = up - (seated ? 14 : 16) * k;
       if (seated) { P.th = 90; P.sh = 180; }
       else if (a < 0) { P.th = 62; P.sh = 150; }
       else { P.th = 100; P.sh = 168; }
@@ -165,7 +166,7 @@ window.SZFIG = (function () {
         var Ps = { base: 'stand', at: [44, G], tr: 28, th: 176, sh: 186, ua: lerp(28, 172, k), fa: lerp(32, 172, k) };
         return { P: Ps, track: 'hand', props: function (q) { return cable(q.hand, [96, -10]).concat([['handle', q.hand]]); } };
       }
-      var P = { base: 'hip', at: [58, 66], tr: 270, th: 100, sh: 168, ua: lerp(0, 262, k), fa: lerp(4, 266, k) };
+      var P = { base: 'hip', at: [58, 66], tr: 270, th: 100, sh: 168, ua: lerp(0, -96, k), fa: lerp(4, -92, k) };
       return { P: P, track: 'hand', props: function (q) { return benchUnder(q.sho, q.hip, 270, 34).concat([['db', q.hand, '', 90]]); } };
     },
     pushup: function (k, p) {
@@ -221,7 +222,7 @@ window.SZFIG = (function () {
     },
     row: function (k, p) {
       if (p.seated) {
-        var Ps = { base: 'hip', at: [36, 82], tr: lerp(8, 348, k), th: 84, sh: 112, ua: lerp(90, 205, k), fa: lerp(90, 82, k) };
+        var Ps = { base: 'hip', at: [36, 82], tr: lerp(8, -12, k), th: 84, sh: 112, ua: lerp(90, 205, k), fa: lerp(90, 82, k) };
         return { P: Ps, track: 'hand', props: function (q) {
           var o = [['rect', [24, 84, 26, 4], 'f-bench f-bench--top'], ['seg', [80, 72], [80, G], 'f-bench']];
           if (p.tool === 'machine') return o.concat([['seg', [70, 40], [70, 76], 'f-bench'], ['handle', q.hand]]);
@@ -244,12 +245,12 @@ window.SZFIG = (function () {
     },
     vpull: function (k, p) {
       if (p.type === 'down') {
-        var Pd = { base: 'hip', at: [46, 64], tr: lerp(0, 348, k), th: 92, sh: 176, ua: lerp(6, 166, k), fa: lerp(2, 14, k) };
+        var Pd = { base: 'hip', at: [46, 64], tr: lerp(0, -12, k), th: 92, sh: 176, ua: lerp(6, 166, k), fa: lerp(2, 14, k) };
         return { P: Pd, track: 'hand', props: function (q) { return [['seg', [32, 66], [58, 66], 'f-bench f-bench--top'], ['seg', [44, 66], [44, G], 'f-bench'], ['seg', [60, 58], [72, 58], 'f-bench'], ['seg', q.hand, [q.hand[0], -14], 'f-cable'], ['seg', [q.hand[0] - 9, q.hand[1]], [q.hand[0] + 9, q.hand[1]], 'f-gryf']]; } };
       }
-      var P = { base: 'hand', at: [54, -4], ua: lerp(0, 160, k), fa: lerp(0, 6, k), tr: lerp(0, 350, k), th: lerp(180, 172, k), sh: 200, th2: 176, sh2: 204, ft: 160 };
+      var P = { base: 'hand', at: [54, 3], ua: lerp(0, 160, k), fa: lerp(0, 6, k), tr: lerp(0, -10, k), th: lerp(176, 168, k), sh: 214, th2: 172, sh2: 220, ft: 190 };
       return { P: P, track: 'head', props: function (q) {
-        var o = [['seg', [32, -4], [76, -4], 'f-bar'], ['seg', [34, -4], [34, -14], 'f-bench'], ['seg', [74, -4], [74, -14], 'f-bench']];
+        var o = [['seg', [32, 3], [76, 3], 'f-bar'], ['seg', [34, 3], [34, -14], 'f-bench'], ['seg', [74, 3], [74, -14], 'f-bench']];
         if (p.weight) o.push(['db', add(q.hip, [0, 9]), '', 90]);
         return o;
       } };
@@ -282,11 +283,11 @@ window.SZFIG = (function () {
       var P;
       if (p.type === 'over') P = { base: 'stand', at: STAND, tr: p.tool === 'cable' ? 22 : 0, th: 180, sh: 180, th2: p.tool === 'cable' ? 200 : 176, sh2: 186, ua: p.tool === 'cable' ? 22 : 358, fa: lerp(205, 360, k) };
       else if (p.type === 'skull') P = { base: 'hip', at: [58, 66], tr: 270, th: 100, sh: 168, ua: 342, fa: lerp(236, 342, k) };
-      else if (p.type === 'kick') P = { base: 'stand', at: [58, G], tr: 76, th: 166, sh: 194, ua: 254, fa: lerp(162, 254, k), ua2: 180, fa2: 180, th2: 132, sh2: 262 };
+      else if (p.type === 'kick') P = { base: 'stand', at: [44, G], tr: 76, th: 166, sh: 194, ua: 254, fa: lerp(162, 254, k), ua2: 180, fa2: 180, th2: 132, sh2: 262 };
       else P = { base: 'stand', at: [48, G], tr: 8, th: 180, sh: 180, th2: 176, sh2: 184, ua: 172, fa: lerp(26, 176, k) };
       return { P: P, track: 'hand', props: function (q) {
         if (p.type === 'skull') return benchUnder(q.sho, q.hip, 270, 34).concat([['plate', q.hand]]);
-        if (p.type === 'kick') return [['rect', [62, 66, 26, 4], 'f-bench f-bench--top'], ['seg', [66, 70], [66, G], 'f-bench'], ['seg', [84, 70], [84, G], 'f-bench'], ['db', q.hand]];
+        if (p.type === 'kick') return [['rect', [50, 66, 26, 4], 'f-bench f-bench--top'], ['seg', [54, 70], [54, G], 'f-bench'], ['seg', [72, 70], [72, G], 'f-bench'], ['db', q.hand]];
         if (p.tool === 'cable') return cable(q.hand, p.type === 'over' ? [8, 86] : [56, -12]).concat([['handle', q.hand]]);
         return [['db', q.hand, '', 90]];
       } };
@@ -301,9 +302,9 @@ window.SZFIG = (function () {
       } };
     },
     bridge: function (k, p) {
-      var P = p.bench ? { base: 'shoulder', at: [24, 70], tr: lerp(300, 266, k), th: lerp(78, 92, k), sh: 170 } : { base: 'shoulder', at: [22, 88], tr: lerp(268, 236, k), th: lerp(66, 92, k), sh: 162 };
+      var P = p.bench ? { base: 'shoulder', at: [24, 70], tr: lerp(300, 266, k), legIK: [68, G - 1], legIK2: [66, G - 1], ikDir: 1 } : { base: 'shoulder', at: [22, 88], tr: lerp(268, 236, k), legIK: [66, G - 1], legIK2: [64, G - 1], ikDir: 1 };
       P.hd = P.tr; P.ua = P.tr + 175; P.fa = P.tr + 150;
-      if (p.single) { P.th2 = P.th - 40; P.sh2 = P.th2; }
+      if (p.single) { delete P.legIK2; P.th2 = 60; P.sh2 = 60; }
       return { P: P, track: 'hip', props: function (q) {
         var o = p.bench ? [['rect', [4, 72, 26, 4], 'f-bench f-bench--top'], ['seg', [8, 76], [8, G], 'f-bench'], ['seg', [26, 76], [26, G], 'f-bench']] : [];
         if (p.tool === 'bar') o.push(['plate', add(q.hip, [0, -9])]);
@@ -314,9 +315,9 @@ window.SZFIG = (function () {
     legcurl: function (k, p) {
       if (p.nordic) {
         var th = 180 + 66 * k;
-        var Pn = { base: 'knee', at: [48, G - 2], th: th, sh: 270, ft: 270, tr: th - 180 };
+        var Pn = { base: 'knee', at: [32, G - 2], th: th, sh: 270, ft: 270, tr: th - 180 };
         Pn.ua = Pn.tr + 168; Pn.fa = Pn.tr + 24;
-        return { P: Pn, track: 'head', props: function () { return [['rect', [16, 84, 10, 6], 'f-box']]; } };
+        return { P: Pn, track: 'head', props: function () { return [['rect', [4, 84, 10, 6], 'f-box']]; } };
       }
       var P = p.seated ? { base: 'hip', at: [44, 64], tr: 354, th: 90, sh: lerp(92, 186, k), ua: 150, fa: 92 } : { base: 'hip', at: [50, 66], tr: 270, th: 90, sh: lerp(90, 8, k), ua: 220, fa: 220, hd: 270 };
       return { P: P, track: 'ank', props: function (q) {
@@ -329,27 +330,27 @@ window.SZFIG = (function () {
     },
     legpress: function (k) {
       var foot = mix([82, 32], [62, 52], k);
-      return { P: { base: 'hip', at: [36, 74], tr: 300, hd: 300, legIK: foot, legIK2: add(foot, [-2, 2]), ikDir: 1, ua: 150, fa: 120, ft: 30 }, track: 'ank', props: function () { return [['seg', [20, 66], [44, 80], 'f-bench f-bench--top'], ['seg', [16, 50], [30, 68], 'f-bench'], ['seg', add(foot, [-6, -8]), add(foot, [8, 6]), 'f-plateline'], ['seg', [60, 70], [96, 22], 'f-rail']]; } };
+      return { P: { base: 'hip', at: [40, 74], tr: 300, hd: 300, legIK: foot, legIK2: add(foot, [-2, 2]), ikDir: 1, ua: 150, fa: 120, ft: 30 }, track: 'ank', props: function () { return [['seg', [20, 66], [44, 80], 'f-bench f-bench--top'], ['seg', [16, 50], [30, 68], 'f-bench'], ['seg', add(foot, [-6, -8]), add(foot, [8, 6]), 'f-plateline'], ['seg', [60, 70], [96, 22], 'f-rail']]; } };
     },
     abduct: function (k) {
       return { P: { base: 'hip', at: [44, 64], tr: 350, th: 90, sh: 180, ua: 160, fa: 100, ls: 1 - .25 * k }, track: '', props: function () { return seat(30, 54, 1); } };
     },
     crunch: function (k, p) {
       if (p.cable) {
-        var Pc = { base: 'knee', at: [58, G - 2], th: 180, sh: 270, ft: 270, tr: lerp(28, 118, k) };
+        var Pc = { base: 'knee', at: [44, G - 2], th: 180, sh: 270, ft: 270, tr: lerp(20, 108, k) };
         Pc.ua = Pc.tr + 172; Pc.fa = Pc.tr + 26;
-        return { P: Pc, track: 'head', props: function (q) { return cable(q.hand, [60, -12]); } };
+        return { P: Pc, track: 'head', props: function (q) { return cable(q.hand, [48, -12]); } };
       }
-      var P = { base: 'hip', at: [52, 90], th: 58, sh: 156, tr: lerp(270, 304, k), ft: 90 };
+      var P = { base: 'hip', at: [46, 90], legIK: [70, G - 1], ikDir: 1, tr: lerp(270, 304, k), ft: 90 };
       P.hd = P.tr + 8; P.ua = P.tr + 50; P.fa = P.tr + 205;
       return { P: P, track: 'head', props: none };
     },
     legraise: function (k, p) {
-      if (p.hang) return { P: { base: 'hand', at: [54, -4], ua: 0, fa: 0, tr: 0, th: lerp(180, 88, k), sh: lerp(190, 120, k) }, track: 'ank', props: function () { return [['seg', [32, -4], [76, -4], 'f-bar']]; } };
-      return { P: { base: 'hip', at: [54, 90], tr: 270, ua: 90, fa: 90, th: lerp(93, 4, k), sh: lerp(93, 6, k), ft: lerp(30, 90, k) }, track: 'ank', props: none };
+      if (p.hang) return { P: { base: 'hand', at: [54, 3], ua: 0, fa: 0, tr: 0, th: lerp(180, 88, k), sh: lerp(190, 120, k) }, track: 'ank', props: function () { return [['seg', [32, 3], [76, 3], 'f-bar']]; } };
+      return { P: { base: 'hip', at: [48, 90], tr: 270, ua: 90, fa: 90, th: lerp(93, 4, k), sh: lerp(93, 6, k), ft: lerp(30, 90, k) }, track: 'ank', props: none };
     },
     abwheel: function (k) {
-      return { P: { base: 'knee', at: [36, G - 2], sh: 270, ft: 270, th: lerp(160, 236, k), tr: lerp(56, 80, k), ua: lerp(180, 96, k), fa: lerp(180, 96, k) }, track: 'hand', props: function (q) { return [['wheel', [q.hand[0], G - 4]]]; } };
+      return { P: { base: 'knee', at: [30, G - 2], sh: 270, ft: 255, th: lerp(160, 228, k), tr: lerp(56, 78, k), ua: lerp(180, 96, k), fa: lerp(180, 96, k) }, track: 'hand', props: function (q) { return [['wheel', [q.hand[0], G - 4]]]; } };
     },
     russian: function (k) {
       return { P: { base: 'hip', at: [46, 88], tr: 330, th: 58, sh: 118, ua: 92, fa: 92, us: .35 + .65 * Math.abs(Math.cos(Math.PI * k)) }, track: '', props: function (q) { return [['db', q.hand, '', 90]]; } };
@@ -357,16 +358,16 @@ window.SZFIG = (function () {
     woodchop: function (k) {
       return { P: { base: 'stand', at: [46, G], tr: lerp(-6, 16, k), th: 186, sh: 178, th2: 170, sh2: 188, ua: lerp(32, 156, k), fa: lerp(34, 158, k) }, track: 'hand', props: function (q) { return cable(q.hand, [96, -10]).concat([['handle', q.hand]]); } };
     },
-    hollow: function (k) { return { P: { base: 'hip', at: [50, 88], tr: 282 - 2 * k, th: 98 + 2 * k, sh: 98 + 2 * k, ua: 282, fa: 284, ft: 140 }, track: '', props: none }; },
-    deadbug: function (k) { return { P: { base: 'hip', at: [52, 90], tr: 270, ua: 0, fa: 0, ua2: lerp(0, 272, k), fa2: lerp(0, 272, k), th: lerp(2, 84, k), sh: lerp(92, 86, k), th2: 2, sh2: 92 }, track: '', props: none }; },
-    birddog: function (k) { return { P: { base: 'knee', at: [38, G - 2], th: 180, sh: 270, ft: 270, tr: 90, ua: lerp(180, 92, k), fa: lerp(180, 92, k), ua2: 180, fa2: 180, th2: lerp(180, 272, k), sh2: lerp(270, 272, k) }, track: 'hand', props: none }; },
+    hollow: function (k) { return { P: { base: 'hip', at: [52, 88], tr: 284 - 2 * k, th: 74 + 2 * k, sh: 74 + 2 * k, ua: 318, fa: 320, ft: 160 }, track: '', props: none }; },
+    deadbug: function (k) { return { P: { base: 'hip', at: [58, 90], ls: .88, tr: 270, ua: 0, fa: 0, ua2: lerp(360, 272, k), fa2: lerp(360, 272, k), th: lerp(2, 84, k), sh: lerp(92, 86, k), th2: 2, sh2: 92 }, track: '', props: none }; },
+    birddog: function (k) { return { P: { base: 'knee', at: [46, G - 2], ls2: .8, us: .82, th: 180, sh: 270, ft: 270, tr: 82, ua: lerp(180, 92, k), fa: lerp(180, 92, k), ua2: 180, fa2: 180, th2: lerp(180, 272, k), sh2: lerp(270, 272, k) }, track: 'hand', props: none }; },
     pallof: function (k, p) {
       return { P: { base: 'stand', at: [46, G], tr: 0, th: 188, sh: 180, th2: 172, sh2: 188, ua: lerp(160, 92, k), fa: lerp(28, 92, k) }, track: 'hand', props: function (q) { return cable(q.hand, [94, 30], p.tool === 'band'); } };
     },
     climber: function (k, p, c) {
       var s = Math.sin(c * Math.PI * 4);
       var P = bodyLine({ base: 'hand', at: [78, G], ua: 180, fa: 180 }, [16, G - 2]), tr = P.tr;
-      P.th = tr + 180 - Math.max(0, s) * 110; P.sh = tr + 180 - Math.max(0, s) * 20; P.th2 = tr + 180 - Math.max(0, -s) * 110; P.sh2 = tr + 180 - Math.max(0, -s) * 20;
+      P.th = tr + 180 - Math.max(0, s) * 60 - 0; P.sh = tr + 180 + Math.max(0, s) * 25; P.th2 = tr + 180 - Math.max(0, -s) * 60; P.sh2 = tr + 180 + Math.max(0, -s) * 25;
       return { P: P, track: '', props: none };
     },
     carry: function (k, p, c) {
@@ -383,9 +384,9 @@ window.SZFIG = (function () {
     },
     jumprope: function (k, p, c) {
       var hop = Math.abs(Math.sin(c * Math.PI * 6)) * 3;
-      return { P: { base: 'stand', at: [50, G - hop], tr: 0, th: 180, sh: 182, th2: 178, sh2: 184, ua: 158, fa: 112, ft: 120 }, track: '', props: function (q) {
+      return { P: { base: 'stand', at: [50, G - hop], tr: 0, th: 180, sh: 182, th2: 178, sh2: 184, ua: 158, fa: 112, ft: 100 }, track: '', props: function (q) {
         var th = c * Math.PI * 6;
-        return [['curve', q.hand, [50 + 26 * Math.sin(th), 48 + 54 * Math.cos(th)], q.hand2, 'f-rope']];
+        return [['curve', q.hand, [50 + 26 * Math.sin(th), 46 + 50 * Math.cos(th)], q.hand2, 'f-rope']];
       } };
     },
     bike: function (k, p, c) {
@@ -394,53 +395,13 @@ window.SZFIG = (function () {
     },
     rowerg: function (k, p, c) {
       var drive = c < .45 ? ease(c / .45) : 1 - ease((c - .45) / .55), arm = Math.max(0, drive * 1.4 - .4);
-      var hip = [lerp(54, 34, drive), 82], foot = [74, 86];
-      return { P: { base: 'hip', at: hip, tr: lerp(24, 342, drive), legIK: foot, legIK2: add(foot, [-1, 1]), ikDir: 1, ua: lerp(90, 208, arm), fa: lerp(90, 82, arm), ft: 30 }, track: '', props: function (q) { return [['seg', [20, 86], [76, 86], 'f-rail'], ['rect', [hip[0] - 7, 84, 14, 3], 'f-bench f-bench--top'], ['circle', [90, 80], 8, 'f-crank'], ['cable', q.hand, [86, 78], '']]; } };
+      var hip = [lerp(46, 28, drive), 82], foot = [66, 86];
+      return { P: { base: 'hip', at: hip, tr: lerp(24, -18, drive), legIK: foot, legIK2: add(foot, [-1, 1]), ikDir: 1, ua: lerp(84, 208, arm), fa: lerp(84, 82, arm), ft: 30 }, track: '', props: function (q) { return [['seg', [14, 86], [70, 86], 'f-rail'], ['rect', [hip[0] - 7, 84, 14, 3], 'f-bench f-bench--top'], ['circle', [84, 80], 8, 'f-crank'], ['cable', q.hand, [80, 78], '']]; } };
     },
-    jack: function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: lerp(178, 10, k), fa: lerp(178, 8, k), ls: 1 - .08 * k }, track: '', props: none }; },
-
-    /* ---------- rozciąganie ---------- */
-    's-neck': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, hd: 18 * k, th: 180, sh: 180, ua: 182, fa: 182 }, props: none }; },
-    's-chin': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, hd: -10 * k, th: 180, sh: 180, ua: 180, fa: 180 }, props: none }; },
-    's-neckrot': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, hd: 8 * Math.sin(k * Math.PI), th: 180, sh: 180, ua: 180, fa: 180 }, props: none }; },
-    's-cross': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: 92, fa: 262 - 8 * k, ua2: 150, fa2: 60 }, props: none }; },
-    's-sleeper': function (k) { return { P: { base: 'hip', at: [56, 86], tr: 270, th: 120, sh: 200, ua: 0, fa: lerp(90, 160, k) }, props: none }; },
-    's-wall': function (k) { return { P: { base: 'stand', at: [44, G], tr: -6 * k, th: 184, sh: 180, th2: 172, sh2: 186, ua: 90, fa: 0 }, props: function () { return [['seg', [72, -10], [72, G], 'f-bench']]; } }; },
-    's-door': function (k) { return { P: { base: 'stand', at: [48, G], tr: 8 * k, th: 172, sh: 186, th2: 198, sh2: 192, ua: 270, fa: 0, us: .7 }, props: function () { return [['seg', [42, -10], [42, G], 'f-bench']]; } }; },
-    's-lat': function (k) { return { P: { base: 'knee', at: [34, G - 2], th: lerp(210, 220, k), sh: 270, ft: 270, tr: lerp(70, 88, k), ua: 82, fa: 82 }, props: function () { return [['rect', [62, 74, 24, 4], 'f-bench f-bench--top'], ['seg', [66, 78], [66, G], 'f-bench'], ['seg', [82, 78], [82, G], 'f-bench']]; } }; },
-    's-tri': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: 352, fa: 190 + 8 * k, ua2: 30, fa2: 330 }, props: none }; },
-    's-wrist': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: 90, fa: 90, ua2: 120, fa2: 60 + 8 * k }, props: none }; },
-    's-thread': function (k) { return { P: { base: 'knee', at: [38, G - 2], th: 180, sh: 270, ft: 270, tr: lerp(90, 104, k), ua: lerp(180, 230, k), fa: lerp(180, 236, k), ua2: 180, fa2: 180, us: 1 - .3 * k }, props: none }; },
-    's-book': function (k) { return { P: { base: 'hip', at: [52, 86], tr: 270, th: 60, sh: 150, ua: 90, fa: 90, ua2: lerp(90, 300, k), fa2: lerp(90, 300, k) }, props: none }; },
-    's-catcow': function (k) { return { P: { base: 'knee', at: [38, G - 2], th: 180, sh: 270, ft: 270, tr: 90, hd: lerp(150, 50, k), ua: 180, fa: 180, up: lerp(3, -2, k) }, props: none }; },
-    's-child': function (k) { return { P: { base: 'knee', at: [52, G - 2], th: 262, sh: 270, ft: 270, tr: lerp(104, 100, k), hd: 120, ua: 96, fa: 98 }, props: none }; },
-    's-hug': function (k) { return { P: { base: 'hip', at: [52, 88], tr: 270, th: lerp(22, 10, k), sh: 140, ua: 60, fa: 110 }, props: none }; },
-    's-twist': function (k) { return { P: { base: 'hip', at: [52, 88], tr: 270, th: 40, sh: 130, ls: lerp(1, .7, k), ua: 0, fa: 0, us: .4 }, props: none }; },
-    's-cobra': function (k) { return { P: { base: 'hip', at: [46, 89], tr: lerp(270, 296, k), hd: lerp(270, 330, k), th: 92, sh: 92, ft: 180, ua: lerp(150, 180, k), fa: lerp(100, 180, k) }, props: none }; },
-    's-pelvic': function (k) { return { P: { base: 'hip', at: [52, 89 - k], tr: 270, th: 58, sh: 156, ua: 90, fa: 90 }, props: none }; },
-    's-hipflex': function (k) { return { P: { base: 'knee', at: [36, G - 2], th: lerp(176, 196, k), sh: 270, ft: 270, tr: 0, ua: 180, fa: 180, th2: 96, sh2: 180 }, props: none }; },
-    's-pigeon': function (k) { return { P: { base: 'hip', at: [44, 84], tr: lerp(20, 70, k), th: 110, sh: 250, th2: 252, sh2: 268, ft2: 270, ua: 180, fa: 180 }, props: none }; },
-    's-fig4': function (k) { return { P: { base: 'hip', at: [54, 88], tr: 270, th: lerp(30, 14, k), sh: 120, th2: lerp(40, 22, k), sh2: 40, ua: 50, fa: 80 }, props: none }; },
-    's-butter': function (k) { return { P: { base: 'hip', at: [46, 88], tr: lerp(8, 30, k), th: 70, sh: 200, ls: .7, ua: 150, fa: 120 }, props: none }; },
-    's-frog': function (k) { return { P: { base: 'knee', at: [52, G - 2], th: lerp(190, 214, k), sh: 270, ft: 270, tr: lerp(86, 96, k), ua: 180, fa: 90, ls: .8 }, props: none }; },
-    's-9090': function (k) { return { P: { base: 'hip', at: [48, 86], tr: lerp(-10, 10, k), th: lerp(70, 110, k), sh: lerp(160, 200, k), th2: lerp(250, 290, k), sh2: lerp(160, 200, k), ua: 150, fa: 120 }, props: none }; },
-    's-quad': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, th2: lerp(176, 192, k), sh2: 10, ft2: 270, ua: 180, fa: 180, ua2: 200, fa2: 160 }, props: none }; },
-    's-quadlie': function (k) { return { P: { base: 'hip', at: [50, 88], tr: 270, th: 90, sh: 90, th2: lerp(96, 110, k), sh2: 300, ua: 0, fa: 0 }, props: none }; },
-    's-ham': function (k) { return { P: { base: 'hip', at: [34, 88], tr: lerp(10, 50, k), th: 90, sh: 90, ft: 0, ua: lerp(120, 100, k), fa: lerp(110, 98, k) }, props: none }; },
-    's-hamband': function (k) { return { P: { base: 'hip', at: [54, 89], tr: 270, th: lerp(30, 10, k), sh: lerp(30, 10, k), th2: 90, sh2: 90, ua: lerp(40, 22, k), fa: lerp(40, 20, k) }, props: function (q) { return [['cable', q.hand, q.ank, 'band']]; } }; },
-    's-hamstand': function (k) { return { P: { base: 'stand', at: [40, G], tr: lerp(0, 40, k), th: 180, sh: 180, th2: 140, sh2: 140, ua: 150, fa: 150 }, props: function () { return [['rect', [62, 78, 18, 16], 'f-box']]; } }; },
-    's-adduct': function (k) { return { P: { base: 'stand', at: [56, G], tr: 14 * k, th: lerp(180, 160, k), sh: lerp(180, 200, k), th2: 232, sh2: 232, ft2: 140, ua: 160, fa: 120 }, props: none }; },
-    's-itb': function (k) { return { P: { base: 'stand', at: STAND, tr: lerp(0, -10, k), th: 180, sh: 180, th2: 168, sh2: 186, ua: lerp(180, 350, k), fa: lerp(180, 340, k) }, props: none }; },
-    's-calf': function (k, p) { return { P: { base: 'stand', at: [60, G], tr: 22, th: 176, sh: 190, th2: 206, sh2: p.bent ? 200 : 206, ft2: 90, ua: 78, fa: 82, dx: lerp(0, 2, k) }, props: function () { return [['seg', [88, -10], [88, G], 'f-bench']]; } }; },
-    's-ankle': function (k) { return { P: { base: 'stand', at: [62, G], tr: 6, th: lerp(150, 136, k), sh: lerp(190, 206, k), th2: 214, sh2: 260, ua: 90, fa: 90 }, props: function () { return [['seg', [82, -10], [82, G], 'f-bench']]; } }; },
-    's-deepsq': function (k) { return { P: { base: 'stand', at: STAND, tr: 30, th: 70, sh: 212, ua: lerp(120, 130, k), fa: 80 }, props: function () { return [['seg', [76, -10], [76, G], 'f-bench']]; } }; },
-    's-wgs': function (k) { return { P: { base: 'stand', at: [62, G], sh: 194, th: 98, tr: 70, th2: 210, sh2: 210, ua: 160, fa: 170, ua2: lerp(170, 20, k), fa2: lerp(170, 20, k) }, props: none }; },
-    's-circles': function (k, p, c) { var a = c * 720; return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: a, fa: a, ua2: a + 180, fa2: a + 180 }, props: none }; },
-    's-pullapart': function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: 90, fa: 90, us: 1 - .7 * k }, props: function (q) { return [['cable', q.hand, q.hand2, 'band']]; } }; },
-    's-bridge': function (k) { return MOVES.bridge(k, {}); }
+    jack: function (k) { return { P: { base: 'stand', at: STAND, tr: 0, th: 180, sh: 180, ua: lerp(178, 10, k), fa: lerp(178, 8, k), ls: 1 - .08 * k }, track: '', props: none }; }
   };
 
-  var CONT = { carry: 1, climber: 1, burpee: 1, jumprope: 1, bike: 1, rowerg: 1, 's-circles': 1 };
+  var CONT = { carry: 1, climber: 1, burpee: 1, jumprope: 1, bike: 1, rowerg: 1 };
   function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function phase(ms, mv, pause) {
     if (CONT[mv]) return { k: 0, c: (ms % 3200) / 3200 };
@@ -550,7 +511,7 @@ window.SZFIG = (function () {
       if (still) ghost = '<g class="f-ghost">' + frontScene(ex.front, 0, ex, {}) + '</g>';
     } else {
       view = 'side';
-      inner = '<path d="M2 94H98" class="f-ground"/>' + scene(ex, still ? 1 : 0, still ? .3 : 0, hl);
+      inner = '<path d="M2 94H98" class="f-ground"/>' + scene(ex, opts.k != null ? opts.k : still ? 1 : 0, opts.k != null ? opts.k : still ? .3 : 0, hl);
       if (!CONT[ex.mv]) ghost = '<g class="f-ghost">' + body(frameOf(ex.mv, still ? 0 : 1, ex.p, 0).q, {}) + '</g>';
       if (!still && opts.track !== false && !CONT[ex.mv]) trk = trackPath(ex.mv, ex.p, frameOf(ex.mv, 0, ex.p, 0).r.track);
     }
@@ -611,7 +572,7 @@ window.SZFIG = (function () {
   function jointLabel(j, sd) {
     var base = SZ.JOINTS[j];
     if (!sd) return base;
-    var fem = j === 'kostka' ? 1 : 0, neu = j === 'biodro' ? 1 : 0;
+    var fem = j === 'kostka' ? 1 : 0, neu = j === 'biodro' || j === 'kolano' ? 1 : 0;
     return base + (sd === 'L' ? (fem ? ' lewa' : neu ? ' lewe' : ' lewy') : (fem ? ' prawa' : neu ? ' prawe' : ' prawy'));
   }
   function side(list, view, o) {
@@ -638,5 +599,5 @@ window.SZFIG = (function () {
     return '<div class="atlas' + (o.mode === 'pain' ? ' atlas--pain' : '') + (o.small ? ' atlas--sm' : '') + '"><figure>' + side(FR, 'front', o) + '<figcaption>przód</figcaption></figure><figure>' + side(BK, 'back', o) + '<figcaption>tył</figcaption></figure></div>';
   }
 
-  return { figure: figure, watch: watch, atlas: atlas, jointLabel: jointLabel, hasFront: function (ex) { return !!(ex.front && FRONT[ex.front]); } };
+  return { figure: figure, watch: watch, atlas: atlas, jointLabel: jointLabel, _frame: function (ex, k, c) { var f = frameOf(ex.mv, k, ex.p, c); return { q: f.q, props: f.r.props ? f.r.props(f.q) : [] }; }, _front: function (ex, k) { return frontScene(ex.front, k, ex, {}); }, hasFront: function (ex) { return !!(ex.front && FRONT[ex.front]); } };
 })();
