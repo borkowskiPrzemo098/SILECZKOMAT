@@ -25,8 +25,8 @@ window.SZFIG = (function () {
       prop: ''
     };
     var h = hand;
-    if (prop === 'bar') g.prop = '<circle cx="' + h[0] + '" cy="' + h[1] + '" r="8.5" class="f-plate"/><circle cx="' + h[0] + '" cy="' + h[1] + '" r="2" class="f-hub"/>';
-    else if (prop === 'db') g.prop = '<rect x="' + (h[0] - 5) + '" y="' + (h[1] - 2.6) + '" width="10" height="5.2" rx="1.6" class="f-db"/>';
+    if (prop === 'bar') g.prop = '<circle cx="' + h[0] + '" cy="' + h[1] + '" r="10" class="f-plate"/><circle cx="' + h[0] + '" cy="' + h[1] + '" r="6.5" class="f-plate2"/><circle cx="' + h[0] + '" cy="' + h[1] + '" r="2.2" class="f-hub"/>';
+    else if (prop === 'db') g.prop = '<rect x="' + (h[0] - 7) + '" y="' + (h[1] - 1.4) + '" width="14" height="2.8" class="f-db"/><rect x="' + (h[0] - 8) + '" y="' + (h[1] - 4) + '" width="4" height="8" rx="1.2" class="f-db"/><rect x="' + (h[0] + 4) + '" y="' + (h[1] - 4) + '" width="4" height="8" rx="1.2" class="f-db"/>';
     else if (prop === 'kb') g.prop = '<circle cx="' + h[0] + '" cy="' + (h[1] + 5) + '" r="5" class="f-db"/>';
     else if (prop === 'cable' || prop === 'band') { var a = anchorFor(pat); g.prop = '<path d="M' + h + 'L' + a + '" class="f-cable' + (prop === 'band' ? ' f-band' : '') + '"/><circle cx="' + a[0] + '" cy="' + a[1] + '" r="2.4" class="f-hub"/>'; }
     return g;
@@ -47,9 +47,11 @@ window.SZFIG = (function () {
     var hl = { leg: '', arm: '', torso: '' };
     (ex.sec || []).forEach(function (m) { hl[SZ.segOf(m)] = 'is-sec'; });
     (ex.prim || []).forEach(function (m) { hl[SZ.segOf(m)] = 'is-prim'; });
-    var g = geometry(poses[0], pat, ex.prop);
-    return '<svg class="fig' + (opts.cls ? ' ' + opts.cls : '') + '" viewBox="0 -14 100 110" data-fig="' + pat + '" data-prop="' + (ex.prop || '') + '" role="img" aria-label="' + (opts.label || ('Animacja ruchu: ' + ex.name)) + '">' +
-      '<path d="M2 94H98" class="f-ground"/>' + staticProps(pat, ex.prop) + '<g class="f-prop">' + g.prop + '</g>' +
+    var still = !!opts.still, main = still ? poses[1] : poses[0], other = still ? poses[0] : poses[1];
+    var g = geometry(main, pat, ex.prop), gh = geometry(other, pat, '');
+    var ghost = '<g class="f-ghost"><path d="' + gh.leg2 + '"/><path d="' + gh.torso + '"/><path d="' + gh.leg + '"/><path d="' + gh.arm + '"/><circle r="5.6" cx="' + gh.head[0] + '" cy="' + gh.head[1] + '"/></g>';
+    return '<svg class="fig' + (opts.cls ? ' ' + opts.cls : '') + '" viewBox="0 -14 100 110"' + (still ? '' : ' data-fig="' + pat + '"') + ' data-prop="' + (ex.prop || '') + '" role="img" aria-label="' + (opts.label || ('Animacja ruchu: ' + ex.name)) + '">' +
+      '<path d="M2 94H98" class="f-ground"/>' + staticProps(pat, ex.prop) + ghost + '<g class="f-prop">' + g.prop + '</g>' +
       '<path class="f-limb f-leg2 ' + hl.leg + '" d="' + g.leg2 + '"/>' +
       '<path class="f-limb f-torso ' + hl.torso + '" d="' + g.torso + '"/>' +
       '<path class="f-limb f-leg ' + hl.leg + '" d="' + g.leg + '"/>' +

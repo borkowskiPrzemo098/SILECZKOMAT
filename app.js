@@ -205,7 +205,7 @@
     return '<section class="ob">' +
       '<div class="ob__dots" aria-label="Krok ' + (ob + 1) + ' z ' + steps + '">' + Array.from({ length: steps }, function (_, i) { return '<i class="' + (i <= ob ? 'on' : '') + '"></i>'; }).join('') + '</div>' +
       '<form class="ob__form" data-ob>' + body + '</form>' +
-      '<div class="ob__nav">' + (ob ? '<button class="btn btn--ghost" data-act="ob-back">Wstecz</button>' : '<button class="btn btn--ghost" data-act="demo">Zobacz demo</button>') +
+      '<div class="ob__nav">' + (ob ? '<button class="btn btn--ghost" data-act="ob-back">Wstecz</button>' : '<button class="btn btn--ghost" data-act="demo">Demo</button>') +
       '<button class="btn btn--main" data-act="ob-next">' + (ob === steps - 1 ? 'Ułóż mój plan' : 'Dalej') + '</button></div></section>';
   }
   function num(n, l, v, u) { return '<label class="field"><span>' + l + '</span><div class="unitbox"><input name="' + n + '" type="number" inputmode="numeric" value="' + v + '"><em>' + u + '</em></div></label>'; }
@@ -215,7 +215,7 @@
     return '<div class="eqlist">' + SZ.EQUIPMENT.map(function (e) { var on = S.equipment[e.id]; return '<button type="button" class="eq' + (on ? ' is-on' : '') + '" data-act="eq" data-v="' + e.id + '" aria-pressed="' + !!on + '"><i aria-hidden="true"></i>' + e.name + '</button>'; }).join('') + '</div>';
   }
   function painChips() {
-    return '<div class="chips" aria-live="polite">' + (S.pain.length ? S.pain.map(function (j) { return '<button type="button" class="chip chip--pain" data-pain="' + j + '">' + SZ.JOINTS[j] + ' <span aria-hidden="true">×</span><span class="sr">usuń</span></button>'; }).join('') : '<p class="muted">Nic nie zaznaczono.</p>') + '</div>';
+    return '<div class="chips" aria-live="polite">' + (S.pain.length ? S.pain.map(function (j) { return '<button type="button" class="chip chip--pain" data-pain="' + j + '">' + SZ.JOINTS[j] + ' <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg><span class="sr">usuń</span></button>'; }).join('') : '<p class="muted">Nic nie zaznaczono.</p>') + '</div>';
   }
   function medNote() { return '<p class="med">To wskazówki treningowe, nie porada medyczna. Jeśli ból jest ostry, narasta albo trwa dłużej niż kilka dni, skonsultuj się z fizjoterapeutą lub lekarzem.</p>'; }
   function readOb() {
@@ -242,11 +242,11 @@
         '<div class="today__head"><h2>' + esc(t.title) + '</h2><p>' + t.items.length + ' ćwiczeń · ok. ' + S.profile.minutes + ' min · cel: ' + GOALS[S.goal.type].name.toLowerCase() + '</p></div>' +
         (t.items.length ? '<ol class="exlist">' + t.items.map(function (it, i) {
           var ex = EXI[it.ex], sg = suggest(it);
-          return '<li><a class="exrow" href="#/cw/' + ex.id + '">' + FIG.figure(ex, { cls: 'fig--sm', label: ex.name }) +
+          return '<li><a class="exrow" href="#/cw/' + ex.id + '">' + FIG.figure(ex, { cls: 'fig--sm', label: ex.name, still: true }) +
             '<span class="exrow__main"><b>' + ex.name + '</b><span>' + it.sets + ' × ' + repsTxt(it) + (sg ? ' · ' + kg(sg) : '') + ' · przerwa ' + it.rest + ' s</span>' +
             (it.note ? '<em class="swap">' + esc(it.note) + '</em>' : '') + '</span></a></li>';
         }).join('') + '</ol>' : '<p class="empty">Z tym sprzętem i zaznaczonym bólem nie ma bezpiecznych ćwiczeń na tę partię. Zmień partię albo sprzęt w Profilu.</p>') +
-        '<button class="btn btn--main btn--wide" data-act="start"' + (t.items.length ? '' : ' disabled') + '>' + (S.active ? 'Zacznij od nowa' : 'Zacznij trening') + '</button>' +
+        '<div class="sticky-cta"><button class="btn btn--main btn--wide" data-act="start"' + (t.items.length ? '' : ' disabled') + '>' + (S.active ? 'Zacznij od nowa' : 'Zacznij trening') + ' · ' + t.items.length + ' ćw.</button></div>' +
       '</section>' +
       '<a class="prcta" href="#/pr"><span><b>Dzień rekordu</b><small>Chcesz dziś pobić PR? Przygotujemy rozgrzewkę i podejścia.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>' +
       (S.pain.length ? '<section class="card care"><h2>Omijamy: ' + S.pain.map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '</h2><p>' + excl + ' ćwiczeń wypadło z planu. Zrób przed treningiem:</p>' +
@@ -258,7 +258,7 @@
     return out;
   }
   function stretchRow(s) {
-    return '<li class="strow">' + FIG.figure({ name: s.name, pat: s.pat, prim: [], sec: [], prop: '' }, { cls: 'fig--sm fig--stretch', label: s.name }) +
+    return '<li class="strow">' + FIG.figure({ name: s.name, pat: s.pat, prim: [], sec: [], prop: '' }, { cls: 'fig--sm fig--stretch', label: s.name, still: true }) +
       '<span><b>' + s.name + '</b><small>' + s.hold + '</small><span class="strow__cue">' + s.cues.join(' ') + '</span></span></li>';
   }
 
@@ -282,12 +282,12 @@
     return '<div class="run">' +
       '<header class="run__top"><button class="iconbtn" data-act="end" aria-label="Zakończ trening"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
       '<div class="run__prog"><span>Ćwiczenie ' + (A.i + 1) + ' z ' + A.items.length + '</span><div class="bar"><i style="--w:' + ((A.i + doneSets / it.sets.length) / A.items.length) + '"></i></div></div></header>' +
-      '<div class="run__fig">' + FIG.figure(ex, { cls: 'fig--lg' }) + '</div>' +
+      '<div class="run__fig">' + FIG.figure(ex, { cls: 'fig--lg' }) + '<div class="run__atlas">' + FIG.atlas({ prim: ex.prim, sec: ex.sec }) + '</div></div>' +
       '<h1 class="run__name">' + ex.name + '</h1>' +
       '<p class="run__meta">' + muscles(ex.prim) + (b ? ' · rekord: ' + kg(b.w) + ' × ' + b.r : '') + '</p>' +
       '<details class="cues"><summary>Technika</summary><ol>' + ex.cues.map(function (c) { return '<li>' + c + '</li>'; }).join('') + '</ol></details>' +
       '<div class="sets" role="table" aria-label="Serie">' +
-      '<div class="sets__row sets__row--head" role="row"><span role="columnheader">Seria</span><span role="columnheader">' + (bw ? 'Dociążenie' : it.unit === 's' ? '—' : 'Ciężar') + '</span><span role="columnheader">' + (it.unit === 's' ? 'Sekundy' : 'Powt. (' + it.lo + (it.lo !== it.hi ? '–' + it.hi : '') + ')') + '</span><span role="columnheader"><span class="sr">Gotowe</span></span></div>' +
+      '<div class="sets__row sets__row--head" role="row"><span role="columnheader">#</span><span role="columnheader">' + (bw ? 'Dociążenie' : it.unit === 's' ? '—' : 'Ciężar') + '</span><span role="columnheader">' + (it.unit === 's' ? 'Sekundy' : 'Powt. (' + it.lo + (it.lo !== it.hi ? '–' + it.hi : '') + ')') + '</span><span role="columnheader"><span class="sr">Gotowe</span></span></div>' +
       it.sets.map(function (x, k) {
         return '<div class="sets__row' + (x.done ? ' is-done' : k === cur ? ' is-cur' : '') + '" role="row">' +
           '<b role="cell">' + (k + 1) + '</b>' +
@@ -295,8 +295,8 @@
           step('r', k, x.r, x.r, it.unit === 's' ? 's' : '') +
           '<span role="cell"><button class="check" data-act="set" data-k="' + k + '" aria-pressed="' + x.done + '" aria-label="Seria ' + (k + 1) + (x.done ? ' zrobiona, cofnij' : ', oznacz jako zrobioną') + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button></span></div>';
       }).join('') + '</div>' +
-      '<div class="run__nav">' + (A.i > 0 ? '<button class="btn btn--ghost" data-act="prev">Poprzednie</button>' : '<span></span>') +
-      (A.i < A.items.length - 1 ? '<button class="btn btn--main" data-act="next">Następne ćwiczenie</button>' : '<button class="btn btn--main" data-act="finish">Zakończ trening</button>') + '</div></div>';
+      '<div class="run__nav' + (A.i > 0 ? '' : ' run__nav--one') + '">' + (A.i > 0 ? '<button class="btn btn--ghost" data-act="prev">Wstecz</button>' : '') +
+      (A.i < A.items.length - 1 ? '<button class="btn btn--main" data-act="next">Dalej: ' + EXI[A.items[A.i + 1].ex].name.split(' ')[0].toLowerCase() + '</button>' : '<button class="btn btn--main" data-act="finish">Zakończ trening</button>') + '</div></div>';
   };
   function step(f, k, v, label, unit) {
     return '<span role="cell" class="stepper"><button data-act="dec" data-f="' + f + '" data-k="' + k + '" aria-label="Mniej"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>' +
@@ -358,7 +358,7 @@
       return '<header class="page"><a class="back" href="#/">Plan</a><h1>Dzień rekordu</h1><p class="lead">Wybierz ćwiczenie. Na podstawie Twojej historii policzymy szacowany maks i ułożymy rozgrzewkę oraz trzy podejścia jak na zawodach.</p></header>' +
         '<ul class="rows rows--pick">' + list.map(function (e) {
           var b = best(e.id), hit = painHit(e);
-          return '<li><button class="pick" data-act="pr-pick" data-v="' + e.id + '"' + (hit.length ? ' data-warn="1"' : '') + '>' + FIG.figure(e, { cls: 'fig--sm', label: e.name }) +
+          return '<li><button class="pick" data-act="pr-pick" data-v="' + e.id + '"' + (hit.length ? ' data-warn="1"' : '') + '>' + FIG.figure(e, { cls: 'fig--sm', label: e.name, still: true }) +
             '<span><b>' + e.name + '</b><small>' + (b ? 'szac. maks ' + kg(b.e) + ' · najlepiej ' + kg(b.w) + ' × ' + b.r : 'brak historii, podasz wynik') + (hit.length ? ' · <em class="bad">ból: ' + hit.map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '</em>' : '') + '</small></span></button></li>';
         }).join('') + '</ul>';
     }
@@ -367,7 +367,7 @@
       var b = best(ex.id);
       return '<header class="page"><button class="back" data-act="pr-back">Wybór</button><h1>' + ex.name + '</h1></header>' +
         (hit.length ? '<section class="card stop"><h2>Odradzamy dziś próbę rekordu</h2><p>Zaznaczyłeś ból: ' + hit.map(function (j) { return SZ.JOINTS[j]; }).join(', ') + '. To ćwiczenie mocno obciąża to miejsce, a maksymalny ciężar zwiększa ryzyko kontuzji. Wybierz inne ćwiczenie albo zrób dziś rozciąganie.</p><ul class="stlist">' + stretchFor(hit).slice(0, 2).map(stretchRow).join('') + '</ul><button class="btn btn--ghost" data-act="pr-back">Wybierz inne ćwiczenie</button></section>' :
-        '<form class="card" data-prform>' + (b ? '<p class="big"><span>Szacowany maks</span><b>' + kg(b.e) + '</b></p><p class="muted">Na podstawie ' + kg(b.w) + ' × ' + b.r + ' z ' + dshort(b.date) + '. Możesz go poprawić, jeśli wiesz lepiej.</p>' : '<p>Nie masz jeszcze zapisanej serii w tym ćwiczeniu. Podaj najlepszą serię z ostatnich tygodni.</p>') +
+        '<form class="card" data-prform>' + (b ? '<p class="big"><b>' + kg(b.e) + '</b></p><p class="muted">Twój szacowany maks na 1 powtórzenie, wyliczony z ' + kg(b.w) + ' × ' + b.r + ' z ' + dshort(b.date) + '. Możesz go poprawić, jeśli wiesz lepiej.</p>' : '<p>Nie masz jeszcze zapisanej serii w tym ćwiczeniu. Podaj najlepszą serię z ostatnich tygodni.</p>') +
           '<div class="grid2">' + num('pw', 'Ciężar', b ? b.w : 60, 'kg') + num('pr', 'Powtórzenia', b ? b.r : 5, 'x') + '</div></form>' +
           '<section class="card"><h2>Gotowość</h2><p class="muted">Zaznacz uczciwie. Każde „nie” obniża dzisiejszy cel.</p><div class="checks">' +
           [['sen', 'Spałem co najmniej 7 godzin'], ['jedz', 'Jadłem 1,5–3 godziny temu'], ['woda', 'Jestem nawodniony'], ['bol', 'Nic mnie dziś nie boli w tej partii'], ['ase', 'Mam asekurację lub zabezpieczenia (stojaki, ograniczniki)']].map(function (c) {
@@ -378,9 +378,9 @@
     if (D.step === 2) {
       var P = D.plan;
       return '<header class="page"><button class="back" data-act="pr-back1">Gotowość</button><h1>' + ex.name + ': plan</h1><p class="lead">Cel dnia: <b>' + kg(P.attempts[2]) + '</b>' + (P.pen ? ' (obniżony o ' + P.pen + '% przez gotowość)' : '') + '.</p></header>' +
-        '<ol class="prsteps">' + P.steps.map(function (s, i) {
+        ramp(P) + '<ol class="prsteps">' + P.steps.map(function (s, i) {
           var st = D.log[i] || '';
-          return '<li class="prs prs--' + s.kind + (st ? ' is-' + st : '') + '"><div class="prs__main"><span class="prs__k">' + s.label + '</span><b>' + s.what + '</b>' + (s.tip ? '<small>' + s.tip + '</small>' : '') + '</div>' +
+          return '<li class="prs prs--' + s.kind + (st ? ' is-' + st : '') + '"><div class="prs__main"><b>' + s.what + '</b><small>' + s.label + (s.tip ? ' · ' + s.tip : '') + '</small></div>' +
             (s.kind === 'att' ? '<div class="lights" role="group" aria-label="Wynik podejścia"><button class="light light--ok' + (st === 'ok' ? ' is-on' : '') + '" data-act="pr-res" data-i="' + i + '" data-v="ok" aria-pressed="' + (st === 'ok') + '">Zaliczone</button><button class="light light--no' + (st === 'no' ? ' is-on' : '') + '" data-act="pr-res" data-i="' + i + '" data-v="no" aria-pressed="' + (st === 'no') + '">Nie wyszło</button></div>' :
               '<button class="check" data-act="pr-done" data-i="' + i + '" aria-pressed="' + (st === 'done') + '" aria-label="Zrobione: ' + esc(s.what) + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>') +
             (s.rest ? '<button class="restbtn" data-act="pr-rest" data-s="' + s.rest + '">Przerwa ' + (s.rest >= 60 ? s.rest / 60 + ' min' : s.rest + ' s') + '</button>' : '') + '</li>';
@@ -390,6 +390,12 @@
     }
     return '';
   };
+  function ramp(P) {
+    var pts = P.steps.filter(function (s) { return s.w; }), top = P.attempts[2];
+    return '<div class="ramp" role="img" aria-label="Narastanie ciężaru od rozgrzewki do próby rekordu">' + pts.map(function (s) {
+      return '<span class="ramp__b' + (s.kind === 'att' ? ' is-att' : '') + '" style="--h:' + (s.w / top) + '"><em>' + Math.round(s.w) + '</em></span>';
+    }).join('') + '</div>';
+  }
   function buildPr(ex, w, r, checks) {
     var e = e1rm(w, r), u = ex.unit || 2.5;
     var neg = ['sen', 'jedz', 'woda', 'bol', 'ase'].filter(function (k) { return !checks[k]; }).length;
@@ -398,14 +404,14 @@
     var a1 = round(base * 0.93, u), a2 = round(base * 0.99, u), a3 = Math.max(round(base * 1.025, u), a2 + u);
     var stretches = stretchFor(ex.stress).slice(0, 2).map(function (s) { return s.name.toLowerCase(); });
     var steps = [
-      { kind: 'prep', label: 'Rozgrzewka', what: '5–8 min roweru, skakanki lub szybkiego marszu', tip: 'Do lekkiego spocenia, tętno w górę.' },
-      { kind: 'prep', label: 'Mobilizacja', what: stretches.length ? 'Dynamicznie: ' + stretches.join(', ') : 'Krążenia stawów i 10 lekkich powtórzeń ruchu', tip: 'Ruch, nie długie trzymanie, żeby nie stracić napięcia.' }
+      { kind: 'prep', label: 'rozgrzewka ogólna', what: '5–8 min roweru, skakanki lub szybkiego marszu', tip: 'Do lekkiego spocenia, tętno w górę.' },
+      { kind: 'prep', label: 'mobilizacja', what: stretches.length ? 'Dynamicznie: ' + stretches.join(', ') : 'Krążenia stawów i 10 lekkich powtórzeń ruchu', tip: 'Ruch, nie długie trzymanie, żeby nie stracić napięcia.' }
     ];
-    if (ex.eq.indexOf('sztanga') > -1) steps.push({ kind: 'warm', label: 'Seria rozgrzewkowa', what: 'Pusta sztanga × 10', rest: 60 });
+    if (ex.eq.indexOf('sztanga') > -1) steps.push({ kind: 'warm', label: 'rozgrzewka', what: 'Pusta sztanga × 10', rest: 60, w: 20 });
     [[0.4, 5, 60], [0.55, 3, 90], [0.7, 2, 120], [0.8, 1, 150], [0.87, 1, 180]].forEach(function (p) {
-      var ww = round(base * p[0], u); if (ww > 0) steps.push({ kind: 'warm', label: 'Seria rozgrzewkowa', what: kg(ww) + ' × ' + p[1], rest: p[2] });
+      var ww = round(base * p[0], u); if (ww > 0) steps.push({ kind: 'warm', label: 'rozgrzewka', what: kg(ww) + ' × ' + p[1], rest: p[2], w: ww });
     });
-    [[a1, '1. podejście', 'Pewniak: ma pójść gładko.'], [a2, '2. podejście', 'Okolice Twojego obecnego maksa.'], [a3, '3. podejście', 'Próba rekordu. Idź tylko, jeśli 2. było szybkie.']].forEach(function (a, i) {
+    [[a1, 'podejście 1', 'Pewniak: ma pójść gładko.'], [a2, 'podejście 2', 'Okolice Twojego obecnego maksa.'], [a3, 'podejście 3', 'Próba rekordu. Idź tylko, jeśli 2. było szybkie.']].forEach(function (a, i) {
       steps.push({ kind: 'att', label: a[1], what: kg(a[0]) + ' × 1', tip: a[2], rest: i < 2 ? 240 : 0, w: a[0] });
     });
     return { e: e, pen: pen, attempts: [a1, a2, a3], steps: steps };
@@ -420,7 +426,7 @@
       SZ.GROUPS.map(function (g) { return '<button class="chip' + (libFilter === g.id ? ' is-on' : '') + '" data-act="lib" data-v="' + g.id + '" aria-pressed="' + (libFilter === g.id) + '">' + g.name + '</button>'; }).join('') + '</div>' +
       '<ul class="lib">' + list.map(function (e) {
         var ok = usable(e);
-        return '<li><a class="libcard' + (ok ? '' : ' is-off') + '" href="#/cw/' + e.id + '">' + FIG.figure(e, { cls: 'fig--md', label: e.name }) + '<b>' + e.name + '</b><small>' + (ok ? muscles(e.prim) : whyNot(e)) + '</small></a></li>';
+        return '<li><a class="libcard' + (ok ? '' : ' is-off') + '" href="#/cw/' + e.id + '">' + FIG.figure(e, { cls: 'fig--md', label: e.name, still: true }) + '<b>' + e.name + '</b><small>' + (ok ? muscles(e.prim) : whyNot(e)) + '</small></a></li>';
       }).join('') + '</ul>';
   };
   routes.cw = function (id) {
@@ -450,7 +456,7 @@
     var prs = Object.keys(S.prs).map(function (k) { return { ex: k, p: S.prs[k] }; }).sort(function (a, b) { return b.p.date - a.p.date; });
     if (!S.sessions.length) return '<header class="page"><h1>Postępy</h1></header><section class="card empty"><p>Tu pojawią się wykresy po pierwszym zapisanym treningu.</p><a class="btn btn--main" href="#/">Zacznij trening</a><button class="btn btn--ghost" data-act="demo-load">Wczytaj przykładowe dane</button></section>';
     return demoBar() + '<header class="page"><h1>Postępy</h1></header>' +
-      '<dl class="ledger ledger--3"><div><dt>W tym tygodniu</dt><dd>' + thisWeek + ' / ' + S.profile.days + '</dd></div><div><dt>Seria tygodni</dt><dd>' + streak() + '</dd></div><div><dt>Rekordy</dt><dd>' + prs.length + '</dd></div></dl>' +
+      '<dl class="ledger ledger--3 ledger--big"><div><dt>Tydzień</dt><dd>' + thisWeek + '<small>/' + S.profile.days + '</small></dd></div><div><dt>Seria</dt><dd>' + streak().replace(' ', '<small> ') + '</small></dd></div><div><dt>Rekordy</dt><dd>' + prs.length + '</dd></div></dl>' +
       '<section class="card"><div class="card__head"><h2>Cel: ' + GOALS[S.goal.type].name.toLowerCase() + '</h2><a class="link" href="#/profil">Zmień</a></div>' +
       (targets.length ? '<ul class="goals">' + targets.map(function (k) {
         var t = S.goal.targets[k], b = best(k), start = (S.goal.starts || {})[k] || (b ? b.e * 0.85 : 0), cur = b ? b.e : 0;
